@@ -14,6 +14,34 @@
 
 /**
  *
+ * @param {string} searchTerm - The word or term we're searching for.
+ * @param {JSON} book - JSON object with Title, ISBN, and Content
+ * key / values representing the optical character matching output of a book
+ * @returns An array of matched content JSON objects in which the
+ * search term was found
+ */
+function matchSearchTermInSingularBook(searchTerm, book) {
+  try {
+    const matchedContent = [];
+    const contentToParse = book?.Content;
+    contentToParse.forEach((scannedLine) => {
+      const textToParse = scannedLine?.Text;
+      if (textToParse.includes(searchTerm)) {
+        const formattedMatchedExample = formatMatchedContent(book, scannedLine);
+        matchedContent.push(formattedMatchedExample);
+      }
+    });
+    return matchedContent;
+  } catch (e) {
+    console.error(
+      "Finding matching search term to a specific book failed with error: ",
+      e
+    );
+  }
+}
+
+/**
+ *
  * @param {JSON} book - A JSON with ISBN, Title, and Content key / values that represent
  * the output from the optical character output for an entire book
  * @param {JSON} scannedLine  - A JSON with Page, Line, and Text key / values that represent
@@ -53,36 +81,6 @@ function formatMatchedListForReturn(searchTerm, matchedContentArray) {
   } catch (e) {
     console.error(
       "Formatting final result object for return failed with error: ",
-      e
-    );
-  }
-}
-
-/**
- *
- * @param {string} searchTerm - The word or term we're searching for.
- * @param {JSON} book - JSON object with Title, ISBN, and Content
- * key / values representing the optical character matching output of a book
- * @returns An array of matched content JSON objects in which the
- * search term was found
- */
-function matchSearchTermInSingularBook(searchTerm, book) {
-  try {
-    const matchedContent = [];
-    const contentToParse = book?.Content;
-    contentToParse.forEach((scannedLine) => {
-      // TODO: handle error case where scanned line is malformed?
-      const textToParse = scannedLine?.Text;
-      if (textToParse.includes(searchTerm)) {
-        // TODO: handle error case where book is malformed?
-        const formattedMatchedExample = formatMatchedContent(book, scannedLine);
-        matchedContent.push(formattedMatchedExample);
-      }
-    });
-    return matchedContent;
-  } catch (e) {
-    console.error(
-      "Finding matching search term to a specific book failed with error: ",
       e
     );
   }
